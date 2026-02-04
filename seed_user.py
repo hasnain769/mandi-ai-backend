@@ -37,5 +37,5 @@ if __name__ == "__main__":
     # Format must match what comes from Twilio/Firebase
     # Usually Twilio sends 'whatsapp:+92...'
     # Our webhook strips 'whatsapp:', so we store '+92...'
-    TEST_PHONE = "+923436765503" 
+    TEST_PHONE = "+923004118298" 
     seed_user(TEST_PHONE)

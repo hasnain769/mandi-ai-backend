@@ -48,6 +48,40 @@ def add_inventory_log(tenant_id: str, item_name: str, quantity: float, unit: str
 
     return new_qty
 
+def record_transaction(tenant_id: str, item_name: str, quantity: float, unit: str, 
+                      transaction_type: str, rate: float = None, buyer_name: str = None, 
+                      is_credit: bool = False):
+    """
+    Records a transaction (Sale/Purchase) and updates inventory.
+    """
+    # 1. Update Inventory First (Reusing existing logic or refining it)
+    action = "IN" if transaction_type == "PURCHASE" else "OUT"
+    new_qty = add_inventory_log(tenant_id, item_name, quantity, unit, action)
+    
+    # 2. Calculate Total
+    total_amount = 0
+    if rate:
+        total_amount = float(quantity) * float(rate)
+
+    # 3. Insert Transaction Record
+    try:
+        data = {
+            "tenant_id": tenant_id,
+            "transaction_type": transaction_type,
+            "item_name": item_name,
+            "quantity": quantity,
+            "unit": unit,
+            "rate": rate,
+            "total_amount": total_amount,
+            "buyer_name": buyer_name,
+            "is_credit": is_credit
+        }
+        supabase.table("transactions").insert(data).execute()
+        return {"status": "success", "new_qty": new_qty, "total_amount": total_amount}
+    except Exception as e:
+        print(f"Error recording transaction: {e}")
+        return {"status": "error", "message": str(e)}
+
 def create_tenant(phone_number: str, business_name: str = "My Mandi Shop"):
     """
     Creates a new tenant in the database.

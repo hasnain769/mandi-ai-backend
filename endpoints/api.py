@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Header
-from services.db import get_tenant_by_phone, get_inventory
+from services.db import get_tenant_by_phone, get_inventory, supabase
 from typing import Optional
 
 router = APIRouter(prefix="/api", tags=["api"])
@@ -18,4 +18,13 @@ async def get_current_user(x_phone_number: Optional[str] = Header(None)):
 @router.get("/dashboard")
 async def get_dashboard_data(user: dict = Depends(get_current_user)):
     inventory = get_inventory(user['id'])
-    return {"inventory": inventory, "user": user}
+    
+    # Fetch recent transactions
+    transactions = []
+    try:
+        response = supabase.table("transactions").select("*").eq("tenant_id", user['id']).order("created_at", desc=True).limit(20).execute()
+        transactions = response.data
+    except Exception as e:
+        print(f"Error fetching transactions: {e}")
+
+    return {"inventory": inventory, "transactions": transactions, "user": user}

@@ -1,6 +1,7 @@
 import logging
 # from google.adk.core import Agent, Model
 from services.agent_tools import update_inventory_tool, query_inventory_tool
+from services.db import record_transaction
 
 # Setup simple logging
 logging.basicConfig(level=logging.INFO)
@@ -25,6 +26,18 @@ async def agent_router(tenant_id: str, extraction_data: dict):
             extraction_data.get("quantity"),
             extraction_data.get("unit"),
             extraction_data.get("action")
+        )
+    
+    elif intent == "SALE":
+        return record_transaction(
+            tenant_id,
+            extraction_data.get("item_name"),
+            extraction_data.get("quantity"),
+            extraction_data.get("unit"),
+            "SALE",
+            extraction_data.get("rate"),
+            extraction_data.get("buyer_name"),
+            extraction_data.get("is_credit")
         )
     
     elif intent == "QUERY":
