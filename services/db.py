@@ -109,3 +109,35 @@ def get_inventory(tenant_id: str):
     except Exception as e:
         print(f"Error fetching inventory: {e}")
         return []
+
+def update_inventory_item(item_id: int, data: dict):
+    """Updates an inventory item directly."""
+    try:
+        supabase.table("inventory").update(data).eq("id", item_id).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+def delete_inventory_item(item_id: int):
+    """Deletes an inventory item."""
+    try:
+        supabase.table("inventory").delete().eq("id", item_id).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+def update_transaction(tx_id: str, data: dict):
+    """Updates a transaction (e.g. correcting a rate/name)."""
+    try:
+        supabase.table("transactions").update(data).eq("id", tx_id).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+def delete_transaction(tx_id: str):
+    """Deletes a transaction record."""
+    try:
+        supabase.table("transactions").delete().eq("id", tx_id).execute()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}

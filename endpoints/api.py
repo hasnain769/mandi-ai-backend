@@ -1,6 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, Header
-from services.db import get_tenant_by_phone, get_inventory, supabase
-from typing import Optional
+from services.db import (
+    get_tenant_by_phone, get_inventory, supabase, 
+    update_inventory_item, delete_inventory_item, 
+    update_transaction, delete_transaction
+)
+from typing import Optional, Any
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/api", tags=["api"])
 
@@ -28,3 +33,21 @@ async def get_dashboard_data(user: dict = Depends(get_current_user)):
         print(f"Error fetching transactions: {e}")
 
     return {"inventory": inventory, "transactions": transactions, "user": user}
+
+# --- Inventory CRUD ---
+@router.put("/inventory/{item_id}")
+async def update_inventory(item_id: int, payload: dict, user: dict = Depends(get_current_user)):
+    return update_inventory_item(item_id, payload)
+
+@router.delete("/inventory/{item_id}")
+async def delete_inventory(item_id: int, user: dict = Depends(get_current_user)):
+    return delete_inventory_item(item_id)
+
+# --- Transaction CRUD ---
+@router.put("/transactions/{tx_id}")
+async def update_tx(tx_id: str, payload: dict, user: dict = Depends(get_current_user)):
+    return update_transaction(tx_id, payload)
+
+@router.delete("/transactions/{tx_id}")
+async def delete_tx(tx_id: str, user: dict = Depends(get_current_user)):
+    return delete_transaction(tx_id)

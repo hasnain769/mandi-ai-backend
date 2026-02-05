@@ -64,6 +64,16 @@ async def process_media_url(media_url: str, media_type: str):
         **Your Task:**
         Extract the inventory intent into structured JSON.
         
+        **TRANSLATION RULE (CRITICAL):**
+        - You are a TRANSLATOR.
+        - `item_name` MUST be in standard English.
+        - "Aalu" -> "Potato"
+        - "Tamatar" -> "Tomato"
+        - "Pyaaz" -> "Onion"
+        - "Adrak" -> "Ginger"
+        - "Thoom/Lehsan" -> "Garlic"
+        - "Mirchi" -> "Chili"
+        
         **Intents:**
         1. **SALE**: Selling items to a buyer (Stock OUT).
            - Keywords: "bheje", "sold", "diye", "Rashid ko diye", "rate lagaya".
